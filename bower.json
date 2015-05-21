@@ -1,0 +1,21 @@
+{
+  "name": "devsum-react",
+  "version": "0.0.0",
+  "authors": [
+    "Rickard <rickard.laurin@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fontawesome": "~4.3.0"
+  },
+  "devDependencies": {
+    "mrwhite-scss-mixins": "~0.10.0"
+  }
+}
