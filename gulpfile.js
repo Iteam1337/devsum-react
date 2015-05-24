@@ -41,21 +41,21 @@ gulp.task('uglify', ['browserify'], function () {
 // CSS
 // --------------------------------------------------
 gulp.task('css', function () {
-    var processors = [
-      postcssImport({ path: ['./app/css'] }),
-      postcssNested,
-      autoprefixer({ browsers: ['last 1 version'] }),
-      mqpacker,
-      csswring,
-      postcssSimpleVars
-    ];
+  var processors = [
+    postcssImport({ path: ['./app/css'] }),
+    postcssNested,
+    autoprefixer({ browsers: ['last 1 version'] }),
+    mqpacker,
+    csswring,
+    postcssSimpleVars
+  ];
 
-    return gulp.src('./app/css/screen.css')
-      .pipe(plugins.sourcemaps.init())
-      .pipe(postcss(processors))
-      .pipe(plugins.sourcemaps.write('.'))
-      .pipe(gulp.dest('./dist'))
-      .pipe(plugins.livereload());
+  return gulp.src('./app/css/screen.css')
+    .pipe(plugins.sourcemaps.init())
+    .pipe(postcss(processors))
+    .pipe(plugins.sourcemaps.write('.'))
+    .pipe(gulp.dest('./dist'))
+    .pipe(plugins.livereload());
 });
 
 gulp.task('watch', function () {
@@ -68,8 +68,8 @@ gulp.task('watch', function () {
 
 gulp.task('copy', function () {
   gulp.src([
-    './app/*.html',
-    './bower_components/fontawesome/fonts/*'
+      './app/*.html',
+      './bower_components/fontawesome/fonts/*'
     ])
     .pipe(gulp.dest('dist'));
 });
