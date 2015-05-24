@@ -1,23 +1,29 @@
-var browserify = require('browserify');
-var gulp       = require('gulp');
-var source     = require("vinyl-source-stream");
-var reactify   = require('reactify');
-var sass       = require('gulp-sass');
-var webserver  = require('gulp-webserver');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var plumber = require('gulp-plumber');
-var livereload = require('gulp-livereload');
+var gulp              = require('gulp');
+var gulpLoadPlugins   = require('gulp-load-plugins');
+var plugins           = gulpLoadPlugins();
 
-gulp.task('webserver', ['browserify', 'scss'], function() {
+var browserify        = require('browserify');
+var envify            = require('envify');
+var source            = require('vinyl-source-stream');
+var reactify          = require('reactify');
+var postcss           = require('gulp-postcss');
+var autoprefixer      = require('autoprefixer-core');
+var mqpacker          = require('css-mqpacker');
+var csswring          = require('csswring');
+var postcssNested     = require('postcss-nested');
+var postcssImport     = require('postcss-import');
+var postcssSimpleVars = require('postcss-simple-vars');
+
+gulp.task('webserver', ['browserify', 'css'], function() {
   gulp.src('dist')
-    .pipe(webserver({
+    .pipe(plugins.webserver({
       livereload: false
     }));
 });
 
 gulp.task('browserify', function(){
   var b = browserify();
+  b.transform(envify); // use the reactify transform
   b.transform(reactify); // use the reactify transform
   b.add('./app/main.js');
   return b.bundle()
@@ -27,25 +33,38 @@ gulp.task('browserify', function(){
 
 gulp.task('uglify', ['browserify'], function () {
   gulp.src('./dist/main.js')
-    .pipe(uglify())
-    .pipe(rename('main.min.js'))
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename('main.min.js'))
     .pipe(gulp.dest('./dist'))
-    .pipe(livereload());
+    .pipe(plugins.livereload());
 })
 
-gulp.task('scss', function () {
-  return gulp.src('./app/scss/screen.scss')
-    .pipe(plumber())
-    .pipe(sass())
-    .pipe(gulp.dest('./dist'))
-    .pipe(livereload());
+//
+// CSS
+// --------------------------------------------------
+gulp.task('css', function () {
+    var processors = [
+      postcssImport({ path: ['./app/css'] }),
+      postcssNested,
+      autoprefixer({ browsers: ['last 1 version'] }),
+      mqpacker,
+      csswring,
+      postcssSimpleVars
+    ];
+
+    return gulp.src('./app/css/screen.css')
+      .pipe(plugins.sourcemaps.init())
+      .pipe(postcss(processors))
+      .pipe(plugins.sourcemaps.write('.'))
+      .pipe(gulp.dest('./dist'))
+      .pipe(plugins.livereload());
 });
 
 gulp.task('watch', function () {
-  livereload.listen();
+  plugins.livereload.listen();
 
   gulp.watch(['./app/**/*.jsx', './app/**/*.js'], ['browserify', 'uglify']);
-  gulp.watch(['./app/scss/**/*.scss'], ['scss']);
+  gulp.watch(['./app/css/**/*.css'], ['css']);
   gulp.watch(['./app/**/*.html'], ['copy']);
 })
 
@@ -57,4 +76,4 @@ gulp.task('copy', function () {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['webserver', 'browserify', 'uglify', 'scss', 'copy', 'watch']);
+gulp.task('default', ['webserver', 'browserify', 'uglify', 'css', 'copy', 'watch']);

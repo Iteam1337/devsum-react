@@ -1,7 +1,8 @@
-var React = require('react');
-var Api = require('./utilities/Api');
+var React  = require('react');
+var Api    = require('./utilities/Api');
 var Loader = require('./react_components/Loader');
-var Tweet = require('./react_components/Tweet');
+var Tweet  = require('./react_components/Tweet');
+var Person = require('./react_components/Person')
 
 module.exports = React.createClass({
   displayName: 'App',
@@ -19,8 +20,9 @@ module.exports = React.createClass({
 
   componentDidMount: function () {
     var self = this;
-    var socket = io.connect('http://devsum-twitter-worker.iteamdev.svc.tutum.io:3000');
+    var socket = io.connect(process.env.BE_URL);
     var faces = [];
+
 
     socket.on('face', function (face) {
       var image = face.tweet.images[0];
@@ -31,23 +33,31 @@ module.exports = React.createClass({
 
       faces.push(face.face);
 
-      // Find size of image
-      var tweetImage = new Image();
-      tweetImage.src = image.media_url;
-
-      var imageSize = {
-        width: tweetImage.width,
-        height: tweetImage.height
-      };
+      while (!self.state.imageSize.height) {
+        self.getImageSize(image.media_url);
+      }
 
       self.setState({
         faces: faces,
         image: image.media_url,
         currentId: image.id,
         currentTweet: face.tweet.id,
-        tweet: face.tweet,
-        imageSize: imageSize
+        tweet: face.tweet
       });
+    });
+  },
+
+  getImageSize: function (url) {
+    var tweetImage = new Image();
+    tweetImage.src = url;
+
+    var imageSize = {
+      width: tweetImage.width,
+      height: tweetImage.height
+    };
+
+    this.setState({
+      imageSize: imageSize
     });
   },
 
@@ -55,13 +65,7 @@ module.exports = React.createClass({
     if (!this.state.currentId) { return <Loader />; }
 
     var persons = this.state.faces.map(function (face, i) {
-      return (
-        <div className="person" key={'person' + i}>
-          <div className="person__number">{i + 1}</div>
-          <div className="person__sex" ref="sex">{face.attributes.gender}</div>
-          <div className="person__age" ref="age">{face.attributes.age} years</div>
-        </div>
-      );
+      return <Person person={face} number={i + 1} key={'person' + i} />;
     });
 
     return (
