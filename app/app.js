@@ -23,7 +23,6 @@ module.exports = React.createClass({
     var socket = io.connect(process.env.BE_URL);
     var faces = [];
 
-
     socket.on('face', function (face) {
       var image = face.tweet.images[0];
 

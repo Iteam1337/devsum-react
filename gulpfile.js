@@ -3,7 +3,6 @@ var gulpLoadPlugins   = require('gulp-load-plugins');
 var plugins           = gulpLoadPlugins();
 
 var browserify        = require('browserify');
-var envify            = require('envify');
 var source            = require('vinyl-source-stream');
 var reactify          = require('reactify');
 var postcss           = require('gulp-postcss');
@@ -23,7 +22,6 @@ gulp.task('webserver', ['browserify', 'css'], function() {
 
 gulp.task('browserify', function(){
   var b = browserify();
-  b.transform(envify); // use the reactify transform
   b.transform(reactify); // use the reactify transform
   b.add('./app/main.js');
   return b.bundle()
