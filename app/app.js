@@ -20,7 +20,7 @@ module.exports = React.createClass({
 
   componentDidMount: function () {
     var self = this;
-    var socket = io.connect('http://devsum-twitter-worker.iteamdev.svc.tutum.io:3000');
+    var socket = io.connect('http://worker.devsum.iteamdev.svc.tutum.io:3000');
     var faces = [];
 
 

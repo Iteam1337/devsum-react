@@ -64,7 +64,7 @@ gulp.task('watch', function () {
   gulp.watch(['./app/**/*.jsx', './app/**/*.js'], ['browserify', 'uglify']);
   gulp.watch(['./app/css/**/*.css'], ['css']);
   gulp.watch(['./app/**/*.html'], ['copy']);
-})
+});
 
 gulp.task('copy', function () {
   gulp.src([
@@ -75,3 +75,4 @@ gulp.task('copy', function () {
 });
 
 gulp.task('default', ['webserver', 'browserify', 'uglify', 'css', 'copy', 'watch']);
+gulp.task('build', ['browserify', 'uglify', 'css', 'copy']);
