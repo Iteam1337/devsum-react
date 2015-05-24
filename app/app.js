@@ -23,7 +23,6 @@ module.exports = React.createClass({
     var socket = io.connect('http://worker.devsum.iteamdev.svc.tutum.io:3000');
     var faces = [];
 
-
     socket.on('face', function (face) {
       var image = face.tweet.images[0];
 
@@ -33,23 +32,37 @@ module.exports = React.createClass({
 
       faces.push(face.face);
 
-      var tweetImage = new Image();
-      tweetImage.src = image.media_url;
-
-      var imageSize = {
-        width: tweetImage.width,
-        height: tweetImage.height
-      };
+      self._setImageSize(image.media_url);
 
       self.setState({
         faces: faces,
         image: image.media_url,
         currentId: image.id,
         currentTweet: face.tweet.id,
-        tweet: face.tweet,
-        imageSize: imageSize
+        tweet: face.tweet
       });
     });
+  },
+
+  _setImageSize: function (url) {
+    var self = this;
+    var tweetImage = new Image();
+    tweetImage.src = url;
+
+    setTimeout(function () {
+      var imageSize = {
+        width: tweetImage.width,
+        height: tweetImage.height
+      };
+
+      if (imageSize.height === 0 || imageSize.width === 0) {
+        self._setImageSize(url);
+      } else {
+        self.setState({
+          imageSize: imageSize
+        });
+      }
+    }, 300);
   },
 
   render: function () {
