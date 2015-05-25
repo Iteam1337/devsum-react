@@ -68,23 +68,19 @@ module.exports = React.createClass({
   render: function () {
     if (!this.state.currentId) { return <Loader />; }
 
-    var persons = this.state.faces.map(function (face, i) {
-      return <Person person={face} number={i + 1} key={'person' + i} />;
-    });
-
     return (
       <div className="faces">
         <div className="photo">
           <div className="photo__wrap" style={this.state.imageSize}>
             <img src={this.state.image} ref="image" className="photo__image" />
             {this.state.faces.map(function (face, i) {
-              return <div style={face.faceRectangle} key={'rectangle' + i} className="photo__face-rectangle" data-number={i + 1}></div>;
+              var sex = face.attributes.gender === 'male' ? 'M' : 'F';
+              return <div style={face.faceRectangle} key={'rectangle' + i} className="photo__face-rectangle" data-number={sex + ' - ' + face.attributes.age}></div>;
             })}
           </div>
         </div>
         <div className="stats">
           <Tweet tweet={this.state.tweet} />
-          {persons}
         </div>
       </div>
     );
