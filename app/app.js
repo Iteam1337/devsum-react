@@ -6,7 +6,7 @@ var Person = require('./react_components/Person')
 
 module.exports = React.createClass({
   displayName: 'App',
-  
+
   getInitialState: function () {
     return {
       faces: [],
@@ -20,7 +20,7 @@ module.exports = React.createClass({
 
   componentDidMount: function () {
     var self = this;
-    var socket = io.connect('http://worker.devsum.iteamdev.svc.tutum.io:3000');
+    var socket = io.connect('http://worker.almedalen.iteamdev.svc.tutum.io:3000');
     var faces = [];
 
     socket.on('face', function (face) {
